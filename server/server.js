@@ -71,7 +71,29 @@ app.delete("/books/:id", (req, res) => {
     });
   });
 });
+app.put("/books/:id", (req, res) => {
+  const { id } = req.params;
+  const { title, author, year, stock } = req.body;
 
+  db.run(
+    `
+    UPDATE books
+    SET title = ?, author = ?, year = ?, stock = ?
+    WHERE id = ?
+    `,
+    [title, author, year, stock, id],
+    function (err) {
+      if (err) {
+        res.status(500).json({ error: err.message });
+        return;
+      }
+
+      res.json({
+        message: "Book updated",
+      });
+    }
+  );
+});
 app.listen(3001, () => {
   console.log("Server running on port 3001");
 });
